@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+# out files
+x64/*
+.vs/*
+
+# generated files
+./*.txt
