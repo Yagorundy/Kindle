@@ -8,6 +8,8 @@
 #include "../utils/list.h"
 
 class BookStorage {
+	BookStorage();
+
 	static const char* kBooksPath;
 	static const char* kBookReadingsPath;
 	static const char* kBookRatingsPath;
@@ -15,6 +17,10 @@ class BookStorage {
 	const char* getBookPagesPath(unsigned int id);
 
 public:
+	BookStorage(BookStorage const&) = delete;
+	void operator=(BookStorage const&) = delete;
+	static BookStorage& getInstance();
+
 	BookModel* createBook(const unsigned int& userId, const char* title);
 	List<BookModel*>* getBooks();
 	BookModel* getBook(const unsigned int& id);

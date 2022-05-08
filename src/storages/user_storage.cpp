@@ -1,24 +1,27 @@
 #include "user_storage.h"
 
-#include <iostream>
+UserStorage::UserStorage() { }
+
+UserStorage& UserStorage::getInstance() {
+	static UserStorage instance;
+	return instance;
+}
 
 const char* UserStorage::kUsersFilePath = "./users.txt";
 
 void UserStorage::signUp(const char* username, const char* password) {
 	std::fstream file(kUsersFilePath, std::ios::in | std::ios::out | std::ios::app);
 	if (!file.is_open())
-		throw CustomExteption("Could not open file!");
+		throw ValidationException("Could not open file!");
 
-	UserModel* readUser = UserModel::deserialize(file);
+	UserModel* readUser = nullptr;
 	try {
 		while (!isInputEmpty(file)) {
-			UserModel* model = UserModel::deserialize(file);
-			if (strcmp(username, model->getUsername()) == 0) {
-				file.close();
-				delete model;
-				throw CustomExteption("User already exists!");
+			readUser = UserModel::deserialize(file);
+			if (strcmp(username, readUser->getUsername()) == 0) {
+				throw ValidationException("User already exists!");
 			}
-			delete model;
+			delete readUser;
 			readUntilNewLine(file);
 		}
 
@@ -36,23 +39,21 @@ void UserStorage::signUp(const char* username, const char* password) {
 	}
 }
 
-unsigned int UserStorage::signIn(const char* username, const char* password) {
+UserModel* UserStorage::login(const char* username, const char* password) {
 	std::ifstream file(kUsersFilePath);
 
 	while (!isInputEmpty(file)) {
 		UserModel* model = UserModel::deserializeWithPassword(file);
 		if (strcmp(username, model->getUsername()) == 0) {
 			if (strcmp(password, model->getPassword()) == 0) {
-				auto id = model->getId();
-				delete model;
-				return id;
+				return model;
 			}
 		}
 		delete model;
 		readUntilNewLine(file);
 	}
 	file.close();
-	throw CustomExteption("Invalid user or password");
+	throw ValidationException("Invalid user or password");
 }
 
 UserModel* UserStorage::getUser(const unsigned int& id) {
@@ -68,7 +69,7 @@ UserModel* UserStorage::getUser(const unsigned int& id) {
 		readUntilNewLine(file);
 	}
 	file.close();
-	throw CustomExteption("Could not find user!");
+	throw ValidationException("Could not find user!");
 }
 
 List<UserModel*>* UserStorage::getUsers(const List<unsigned int>& ids) {

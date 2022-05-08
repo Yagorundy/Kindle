@@ -46,7 +46,7 @@ public:
 
     T& operator[](size_t index) const {
         if (index < 0 || index >= size_)
-            throw CustomExteption("Index out of range!");
+            throw ValidationException("Index out of range!");
         return arr_[index];
     }
 

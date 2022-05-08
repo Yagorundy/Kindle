@@ -2,9 +2,20 @@
 
 #include <exception>
 
-class CustomExteption : public std::exception {
+#include "str_helpers.h"
+
+class ValidationException : public std::exception {
+	const char* info_;
+
 public:
-	CustomExteption(const char* msg)
-		: std::exception(msg)
-	{ }
+	ValidationException();
+	ValidationException(const char* info);
+
+	const char* what() const throw ();
+};
+
+
+class InvalidArgumentsException : public ValidationException {
+public:
+	InvalidArgumentsException();
 };

@@ -139,6 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\app\app_state.cpp" />
+    <ClCompile Include="src\app\command_parser.cpp" />
+    <ClCompile Include="src\commands\command.cpp" />
+    <ClCompile Include="src\app\kindle.cpp" />
+    <ClCompile Include="src\commands\login_command.cpp" />
+    <ClCompile Include="src\commands\logout_command.cpp" />
+    <ClCompile Include="src\commands\sign_up_command.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\models\book_model.cpp" />
     <ClCompile Include="src\models\book_comment_model.cpp" />
@@ -149,11 +156,23 @@
     <ClCompile Include="src\models\user_book_model.cpp" />
     <ClCompile Include="src\storages\book_storage.cpp" />
     <ClCompile Include="src\storages\user_storage.cpp" />
+    <ClCompile Include="src\utils\custom_exception.cpp" />
     <ClCompile Include="src\utils\file_helpers.cpp" />
+    <ClCompile Include="src\utils\input_helpers.cpp" />
     <ClCompile Include="src\utils\random_id.cpp" />
+    <ClCompile Include="src\utils\str_helpers.cpp" />
+    <ClInclude Include="src\app\app_state.h" />
+    <ClInclude Include="src\app\command_parser.h" />
+    <ClInclude Include="src\commands\command.h" />
+    <ClInclude Include="src\app\kindle.h" />
+    <ClInclude Include="src\commands\login_command.h" />
+    <ClInclude Include="src\commands\logout_command.h" />
+    <ClInclude Include="src\commands\sign_up_command.h" />
     <ClInclude Include="src\models\book_reading_model.h" />
+    <ClInclude Include="src\utils\input_helpers.h" />
     <ClInclude Include="src\utils\list.h" />
     <ClInclude Include="src\utils\random_id.h" />
+    <ClInclude Include="src\utils\str_helpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\models\book_model.h" />
