@@ -52,25 +52,24 @@ BookModel* BookStorage::createBook(const unsigned int& userId, const char* title
 }
 
 List<BookModel*>* BookStorage::getBooks() {
-	std::ifstream file(kBooksPath);
-	if (!file.is_open())
-		throw ValidationException("Could not open file!");
-
 	auto list = new List<BookModel*>();
-	while (!isInputEmpty(file)) {
-		BookModel* book = BookModel::deserialize(file);
-		if (!isEmptyString(book->getTitle())) {
-			list->add(book);
+	std::ifstream file(kBooksPath);
+	if (file.is_open()) {
+		while (!isInputEmpty(file)) {
+			BookModel* book = BookModel::deserialize(file);
+			if (!isEmptyString(book->getTitle())) {
+				list->add(book);
+			}
+			else {
+				delete book;
+			}
+			readUntilNewLine(file);
 		}
-		else {
-			delete book;
-		}
-		readUntilNewLine(file);
 	}
 	return list;
 }
 
-BookModel* BookStorage::getBook(const unsigned int& id) {
+BookModel* BookStorage::getBookById(const unsigned int& id) {
 	std::ifstream file(kBooksPath);
 	if (!file.is_open())
 		throw ValidationException("Could not open file!");
@@ -88,13 +87,31 @@ BookModel* BookStorage::getBook(const unsigned int& id) {
 	throw ValidationException("Could not find book!");
 }
 
+BookModel* BookStorage::getBookByTitle(const char* title) {
+	std::ifstream file(kBooksPath);
+	if (!file.is_open())
+		throw ValidationException("Could not open file!");
+
+	while (!isInputEmpty(file)) {
+		BookModel* book = BookModel::deserialize(file);
+		if (strcmp(book->getTitle(), title) == 0) {
+			file.close();
+			return book;
+		}
+		delete book;
+		readUntilNewLine(file);
+	}
+	file.close();
+	throw ValidationException("Could not find book!");
+}
+
 
 void BookStorage::createPage(const unsigned int& userId, const unsigned int& bookId, const char* content) {
 	BookModel* book = nullptr;
 	const char* path = nullptr;
 	std::ofstream file;
 	try {
-		book = getBook(bookId);
+		book = getBookById(bookId);
 		if (book->getAuthorId() != userId)
 			throw ValidationException("You cannot add pages to this book!");
 
@@ -113,32 +130,32 @@ void BookStorage::createPage(const unsigned int& userId, const unsigned int& boo
 }
 
 List<PageModel*>* BookStorage::getPages(const unsigned int& bookId) {
-	BookModel* book = getBook(bookId);
+	BookModel* book = getBookById(bookId);
 	delete book;
 	
 	const char* path = getBookPagesPath(bookId);
 	std::ifstream file(path);
 	delete[] path;
-	if (!file.is_open())
-		throw ValidationException("Could not open file!");
 
-	auto list = new List<PageModel*>();
-	while (!isInputEmpty(file)) {
-		PageModel* page = PageModel::deserialize(file);
-		if (!isEmptyString(page->getContent())) {
-			list->add(page);
+	List<PageModel*>* list = new List<PageModel*>();
+	if (file.is_open()) {
+		while (!isInputEmpty(file)) {
+			PageModel* page = PageModel::deserialize(file);
+			if (!isEmptyString(page->getContent())) {
+				list->add(page);
+			}
+			else {
+				delete page;
+			}
+			readUntilNewLine(file);
 		}
-		else {
-			delete page;
-		}
-		readUntilNewLine(file);
 	}
 	return list;
 }
 
 
 void BookStorage::addBookReading(const unsigned int& userId, const unsigned int& bookId) {
-	std::ofstream file(kBookRatingsPath, std::ios::out | std::ios::app);
+	std::ofstream file(kBookReadingsPath, std::ios::out | std::ios::app);
 	if (!file.is_open())
 		throw ValidationException("Could not open file!");
 
@@ -151,7 +168,7 @@ void BookStorage::addBookReading(const unsigned int& userId, const unsigned int&
 bool BookStorage::hasUserReadBook(const unsigned int& userId, const unsigned int& bookId) {
 	std::ifstream file(kBookReadingsPath);
 	if (!file.is_open())
-		throw ValidationException("Could not open file!");
+		return false;
 
 	while (!isInputEmpty(file)) {
 		BookReadingModel* bookReading = BookReadingModel::deserialize(file);
@@ -180,19 +197,19 @@ void BookStorage::addBookRating(const unsigned int& userId, const unsigned int& 
 
 List<BookRatingModel*>* BookStorage::getBookRatings(unsigned int bookId) {
 	std::ifstream file(kBookRatingsPath);
-	if (!file.is_open())
-		throw ValidationException("Could not open file!");
 
 	auto list = new List<BookRatingModel*>();
-	while (!isInputEmpty(file)) {
-		BookRatingModel* rating = BookRatingModel::deserialize(file);
-		if (rating->getBookId() == bookId) {
-			list->add(rating);
+	if (file.is_open()) {
+		while (!isInputEmpty(file)) {
+			BookRatingModel* rating = BookRatingModel::deserialize(file);
+			if (rating->getBookId() == bookId) {
+				list->add(rating);
+			}
+			else {
+				delete rating;
+			}
+			readUntilNewLine(file);
 		}
-		else {
-			delete rating;
-		}
-		readUntilNewLine(file);
 	}
 	return list;
 }
@@ -210,19 +227,19 @@ void BookStorage::addComment(const unsigned int& userId, const unsigned int& boo
 
 List<BookCommentModel*>* BookStorage::getComments(unsigned int bookId) {
 	std::ifstream file(kBookCommentsPath);
-	if (!file.is_open())
-		throw ValidationException("Could not open file!");
 
-	auto list = new List<BookCommentModel*>();
-	while (!isInputEmpty(file)) {
-		BookCommentModel* comment = BookCommentModel::deserialize(file);
-		if (comment->getBookId() == bookId) {
-			list->add(comment);
+	List<BookCommentModel*>* list = new List<BookCommentModel*>();
+	if (file.is_open()) {
+		while (!isInputEmpty(file)) {
+			BookCommentModel* comment = BookCommentModel::deserialize(file);
+			if (comment->getBookId() == bookId) {
+				list->add(comment);
+			}
+			else {
+				delete comment;
+			}
+			readUntilNewLine(file);
 		}
-		else {
-			delete comment;
-		}
-		readUntilNewLine(file);
 	}
 	return list;
 }

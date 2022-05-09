@@ -19,4 +19,7 @@ void SignUpCommand::exec() {
     const char* password = promptSingleLineInput("Enter password: ");
     UserStorage::getInstance().signUp(username, password);
     std::cout << "\tUser registered!\n";
+
+    delete[] username;
+    delete[] password;
 }

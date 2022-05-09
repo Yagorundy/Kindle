@@ -4,12 +4,7 @@ const char* LoginCommand::kName = "login";
 
 LoginCommand::LoginCommand(List<char*>* args)
     : Command(args)
-{
-    //if (args->size() != 1)
-    //    throw InvalidArgumentsException();
-
-    //value_ = num_helper::FromHex((*args_)[0]);
-}
+{ }
 
 void LoginCommand::exec() {
     if (AppState::getInstance().isLoggedIn())
@@ -22,4 +17,8 @@ void LoginCommand::exec() {
     AppState::getInstance().setUserId(user->getId());
 
     std::cout << "\tWelcome, " << user->getUsername() << "!\n";
+
+    delete[] username;
+    delete[] password;
+    delete user;
 }

@@ -8,6 +8,8 @@ class Command {
 protected:
     List<char*>* args_;
 
+    void assertUserIsLoggedIn();
+
 public:
     static Command* create(const char* name, List<char*>* args);
 

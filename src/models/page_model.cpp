@@ -47,6 +47,6 @@ PageModel* PageModel::deserialize(std::istream& is) {
 	is >> model->id_
 		>> model->bookId_;
 		//>> model->number_;
-	model->content_ = deserializeString(is);
+	model->content_ = deserializeString(is, false);
 	return model;
 }

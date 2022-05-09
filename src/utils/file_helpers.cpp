@@ -29,7 +29,7 @@ void serializeString(const char* str, std::ostream& file, bool sameLine) {
 	}
 }
 
-char* deserializeString(std::istream& file) {
+char* deserializeString(std::istream& file, bool sameLine) {
 	if (isInputEmpty(file))
 		return getEmptyString();
 
@@ -37,8 +37,14 @@ char* deserializeString(std::istream& file) {
 	file >> len;
 	if (!len)
 		return getEmptyString();
+
+	if (sameLine) {
+		file.seekg(1 + file.tellg());
+	}
+	else {
+		readUntilNewLine(file);
+	}
 	
-	file.seekg(1 + file.tellg());
 
 	char* str = new char[len + 1];
 	file.read(str, len);

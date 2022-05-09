@@ -23,7 +23,8 @@ public:
 
 	BookModel* createBook(const unsigned int& userId, const char* title);
 	List<BookModel*>* getBooks();
-	BookModel* getBook(const unsigned int& id);
+	BookModel* getBookById(const unsigned int& id);
+	BookModel* getBookByTitle(const char* name);
 
 	void createPage(const unsigned int& userId, const unsigned int& bookId, const char* content);
 	List<PageModel*>* getPages(const unsigned int& bookId);
